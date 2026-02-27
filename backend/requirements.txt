@@ -1,0 +1,16 @@
+fastapi>=0.111.0
+uvicorn==0.27.1
+python-dotenv==1.0.1
+opencv-python-headless>=4.9.0.80
+mediapipe>=0.10.30
+numpy>=1.26.4
+Pillow>=10.2.0
+# pydantic >= 2.7 has pre-built wheels for Python 3.13
+pydantic>=2.7.0
+httpx>=0.26.0
+openai>=1.12.0
+# Gemini support (uses httpx, no Rust build needed):
+# google-genai>=0.3.0
+# Optional: deepface for more accurate emotion detection (heavy install)
+# deepface==0.0.92
+# tf-keras>=2.15.0

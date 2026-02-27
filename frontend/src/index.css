@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+    background-color: #040d1a;
+    color: #e2e8f0;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #071428;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #00f5ff44;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00f5ff88;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+  
+  .cyber-border {
+    border: 1px solid;
+    border-image: linear-gradient(135deg, #00f5ff44, #7c3aed44, #00f5ff44) 1;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+
+  .metric-card {
+    @apply glass-panel p-4 relative overflow-hidden;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,245,255,0.03), rgba(124,58,237,0.03));
+    pointer-events: none;
+  }
+
+  .scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00f5ff, transparent);
+    animation: scan 4s linear infinite;
+    opacity: 0.3;
+  }
+
+  .advice-card {
+    @apply glass-panel p-5 border-l-4 border-l-cyan-400 animate-fade-in-up;
+    background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(124,58,237,0.05));
+  }
+
+  .alert-badge {
+    @apply text-xs font-mono px-3 py-1.5 rounded-full border animate-fade-in-up;
+  }
+  
+  .btn-primary {
+    @apply relative flex items-center gap-2 px-6 py-3 font-semibold text-sm rounded-lg transition-all duration-300;
+    background: linear-gradient(135deg, #00f5ff22, #7c3aed22);
+    border: 1px solid #00f5ff66;
+    color: #00f5ff;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #00f5ff44, #7c3aed44);
+    border-color: #00f5ff;
+    box-shadow: 0 0 20px #00f5ff44;
+    transform: translateY(-1px);
+  }
+  
+  .btn-danger {
+    @apply relative flex items-center gap-2 px-6 py-3 font-semibold text-sm rounded-lg transition-all duration-300;
+    background: linear-gradient(135deg, #ef444422, #ef444422);
+    border: 1px solid #ef444466;
+    color: #ef4444;
+  }
+  
+  .btn-danger:hover {
+    background: linear-gradient(135deg, #ef444444, #ef444444);
+    border-color: #ef4444;
+    box-shadow: 0 0 20px #ef444444;
+  }
+
+  .progress-bar {
+    @apply h-2 rounded-full overflow-hidden bg-white/10;
+  }
+  
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-700;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .video-overlay {
+    background: linear-gradient(
+      to bottom,
+      transparent 60%,
+      rgba(4, 13, 26, 0.8) 100%
+    );
+  }
+}
