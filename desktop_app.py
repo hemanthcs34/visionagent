@@ -1,5 +1,6 @@
 import sys
 import ctypes
+import argparse
 from PyQt6.QtCore import QUrl, Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt6.QtWebEngineWidgets import QWebEngineView
@@ -60,15 +61,21 @@ class StayOnTopApp(QMainWindow):
             print("Screen capture protection is only supported on Windows.")
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="CogniSync Desktop Wrapper")
+    parser.add_argument(
+        "--url",
+        default="http://localhost:5173",
+        help="URL of the frontend to load (default: http://localhost:5173). "
+             "Use your deployed Vercel URL for production, e.g. https://cognisync.vercel.app"
+    )
+    args = parser.parse_args()
+
     app = QApplication(sys.argv)
-    
-    # URL to your frontend - modify if your Vite server runs on a different port
-    frontend_url = "http://localhost:5173"
-    
-    window = StayOnTopApp(frontend_url)
+
+    window = StayOnTopApp(args.url)
     window.show()
     
-    print(f"Starting desktop wrapper for {frontend_url}...")
+    print(f"Starting desktop wrapper for {args.url}...")
     print("This window is set to stay on top and is excluded from screen sharing software (like OBS/Teams/Zoom).")
     
     sys.exit(app.exec())

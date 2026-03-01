@@ -17,9 +17,19 @@ load_dotenv()
 
 app = FastAPI(title="CogniSync API", version="1.0.0")
 
+# CORS: allow the frontend origin (env var for production, localhost for dev)
+frontend_url = os.getenv("FRONTEND_URL", "")
+allowed_origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+]
+if frontend_url:
+    allowed_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -210,6 +220,9 @@ async def health():
 
 @app.post("/launch-desktop")
 async def launch_desktop():
+    # This endpoint only works when running locally
+    if os.getenv("RENDER") or os.getenv("VERCEL"):
+        raise HTTPException(status_code=403, detail="Desktop mode is only available when running locally")
     try:
         # Launch the desktop app as a separate process
         # Using the same python executable that the backend is running with

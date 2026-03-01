@@ -14,8 +14,8 @@ export function useAnalysis({ onResult, onError, intervalMs = 1000 }) {
     const analyserRef = useRef(null)
     const audioStreamRef = useRef(null)
 
-    // Backend URL: try the Vite proxy first, fall back to direct localhost
-    const BACKEND_URL = 'http://localhost:8000'
+    // Backend URL: uses VITE_API_URL env var in production, empty string uses Vite proxy in dev
+    const BACKEND_URL = import.meta.env.VITE_API_URL || ''
 
     // --- Audio Analysis Setup ---
     const initAudio = useCallback(async () => {

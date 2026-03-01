@@ -9,6 +9,8 @@ import AlertSystem from './components/AlertSystem'
 import EngagementChart from './components/EngagementChart'
 
 const MAX_HISTORY = 30
+const API_URL = import.meta.env.VITE_API_URL || ''
+const IS_LOCAL = !API_URL || API_URL.includes('localhost') || API_URL.includes('127.0.0.1')
 
 export default function App() {
     const [isActive, setIsActive] = useState(false)
@@ -43,7 +45,7 @@ export default function App() {
 
     const checkBackend = async () => {
         try {
-            const res = await fetch('http://localhost:8000/health', { signal: AbortSignal.timeout(3000) })
+            const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(3000) })
             setBackendOnline(res.ok)
         } catch {
             setBackendOnline(false)
@@ -70,7 +72,7 @@ export default function App() {
     const launchDesktopMode = async () => {
         setIsLaunchingDesktop(true);
         try {
-            const res = await fetch('http://localhost:8000/launch-desktop', {
+            const res = await fetch(`${API_URL}/launch-desktop`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -137,15 +139,17 @@ export default function App() {
                             </div>
                         )}
 
-                        <button
-                            onClick={launchDesktopMode}
-                            disabled={isLaunchingDesktop}
-                            title="Launch as an invisible, always-on-top desktop app"
-                            className="btn-secondary flex items-center gap-2 px-3 py-1.5 text-sm bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                            <Monitor className="w-4 h-4" />
-                            {isLaunchingDesktop ? 'Launching...' : 'Desktop Mode'}
-                        </button>
+                        {IS_LOCAL && (
+                            <button
+                                onClick={launchDesktopMode}
+                                disabled={isLaunchingDesktop}
+                                title="Launch as an invisible, always-on-top desktop app"
+                                className="btn-secondary flex items-center gap-2 px-3 py-1.5 text-sm bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                <Monitor className="w-4 h-4" />
+                                {isLaunchingDesktop ? 'Launching...' : 'Desktop Mode'}
+                            </button>
+                        )}
 
                         {/* Start / Stop button */}
                         {!isActive ? (
