@@ -2,6 +2,8 @@ import os
 import base64
 import asyncio
 import time
+import subprocess
+import sys
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -206,6 +208,20 @@ async def analyze(request: AnalyzeRequest):
 async def health():
     return {"status": "ok", "version": "1.0.0"}
 
+@app.post("/launch-desktop")
+async def launch_desktop():
+    try:
+        # Launch the desktop app as a separate process
+        # Using the same python executable that the backend is running with
+        app_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "desktop_app.py")
+        
+        # Popen doesn't wait for the process to finish
+        subprocess.Popen([sys.executable, app_path], 
+                         creationflags=subprocess.CREATE_NEW_CONSOLE if sys.platform == 'win32' else 0)
+        return {"status": "success", "message": "Desktop mode launched"}
+    except Exception as e:
+        print(f"Error launching desktop mode: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to launch desktop mode: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

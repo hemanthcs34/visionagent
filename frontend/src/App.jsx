@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Play, Square, Brain, Cpu, Wifi, WifiOff } from 'lucide-react'
+import { Play, Square, Brain, Cpu, Wifi, WifiOff, Monitor } from 'lucide-react'
 import { useAnalysis } from './hooks/useAnalysis'
 import VideoStream from './components/VideoStream'
 import MetricsPanel from './components/MetricsPanel'
@@ -18,8 +18,7 @@ export default function App() {
     const [error, setError] = useState(null)
     const [frameCount, setFrameCount] = useState(0)
     const [backendOnline, setBackendOnline] = useState(null)
-
-
+    const [isLaunchingDesktop, setIsLaunchingDesktop] = useState(false)
     const handleResult = useCallback((data) => {
         setIsLoading(false)
         setError(null)
@@ -44,7 +43,7 @@ export default function App() {
 
     const checkBackend = async () => {
         try {
-            const res = await fetch('/health', { signal: AbortSignal.timeout(3000) })
+            const res = await fetch('http://localhost:8000/health', { signal: AbortSignal.timeout(3000) })
             setBackendOnline(res.ok)
         } catch {
             setBackendOnline(false)
@@ -66,6 +65,26 @@ export default function App() {
         stop()
         setIsActive(false)
         setIsLoading(false)
+    }
+
+    const launchDesktopMode = async () => {
+        setIsLaunchingDesktop(true);
+        try {
+            const res = await fetch('http://localhost:8000/launch-desktop', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                setError(`Failed to launch desktop mode: ${data.detail || res.statusText}`);
+            }
+        } catch (err) {
+            setError(`Failed to launch desktop mode: ${err.message}`);
+        } finally {
+            setIsLaunchingDesktop(false);
+        }
     }
 
     return (
@@ -117,6 +136,16 @@ export default function App() {
                                 <span className="text-xs font-mono text-cyan-400">{frameCount} frames</span>
                             </div>
                         )}
+
+                        <button
+                            onClick={launchDesktopMode}
+                            disabled={isLaunchingDesktop}
+                            title="Launch as an invisible, always-on-top desktop app"
+                            className="btn-secondary flex items-center gap-2 px-3 py-1.5 text-sm bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                            <Monitor className="w-4 h-4" />
+                            {isLaunchingDesktop ? 'Launching...' : 'Desktop Mode'}
+                        </button>
 
                         {/* Start / Stop button */}
                         {!isActive ? (
